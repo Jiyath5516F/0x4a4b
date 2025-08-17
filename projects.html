@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en" data-theme="sand">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>All Projects — 0x4a4b</title>
+  <meta name="description" content="Browse all GitHub repositories by 0x4a4b with search and filters." />
+  <meta name="theme-color" content="#fffdf8" />
+  <link rel="canonical" href="./projects.html" />
+  <meta property="og:title" content="All Projects — 0x4a4b" />
+  <meta property="og:description" content="Explore and search all GitHub repositories by 0x4a4b." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="./projects.html" />
+  <meta property="og:image" content="./assets/img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/reset.css" />
+  <link rel="stylesheet" href="./assets/css/variables.css" />
+  <link rel="stylesheet" href="./assets/css/base.css" />
+  <link rel="stylesheet" href="./assets/css/layout.css" />
+  <link rel="stylesheet" href="./assets/css/components.css" />
+  <link rel="icon" href="./assets/img/favicon.png" type="image/svg+xml" />
+</head>
+<body data-skip-projects="true">
+  <div class="loader-overlay" id="page-loader" aria-hidden="true"><div class="spinner" role="status" aria-label="Loading"></div></div>
+  <div id="tsparticles" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">0x4a4b</a>
+      <button class="mobile-toggle" id="mobile-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle menu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <a href="./index.html#about">About</a>
+        <!-- <a href="./index.html#experience">Experience</a> -->
+        <a href="./index.html#projects">Projects</a>
+        <a href="./blogs.html">Blog</a>
+        <a href="./index.html#contact">Contact</a>
+        <div class="menu-footer">
+          <span class="muted" style="font-size:14px">Appearance</span>
+          <div class="theme-switch">
+            <label class="switch" aria-label="Theme">
+              <input type="checkbox" id="theme-toggle" />
+              <span class="slider" aria-hidden="true"></span>
+              <span class="switch-label" id="theme-label">Light</span>
+            </label>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section" data-section="projects">
+      <div class="container">
+        <div class="section-head">
+          <h1>All Projects</h1>
+          <div class="filters">
+            <input type="search" id="project-search" placeholder="Search projects..." aria-label="Search projects" autocomplete="off" />
+            <label class="switch">
+              <input type="checkbox" id="sort-toggle" />
+              <span class="slider"></span>
+              <span class="switch-label" id="sort-label" aria-live="polite">Sort: Popular</span>
+            </label>
+          </div>
+        </div>
+        <div id="projects-grid" class="grid" aria-busy="true"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> 0x4a4b. <a href="./index.html">← Back to main</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js" defer></script>
+  <script type="module" src="./assets/js/main.js"></script>
+  <script type="module">
+    import { getRepos, scoreRepoPopular, scoreRepoClean } from './assets/js/api.js';
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const grid = document.getElementById('projects-grid');
+    const search = document.getElementById('project-search');
+    const sortToggle = document.getElementById('sort-toggle');
+    const sortLabel = document.getElementById('sort-label');
+
+    // Project card template
+    const projectCard = (repo) => {
+      const desc = repo.description ? repo.description.slice(0, 120) + (repo.description.length > 120 ? '...' : '') : 'No description available.';
+      const lang = repo.language ? `<span class="tag">${repo.language}</span>` : '';
+      const topics = repo.topics?.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('') || '';
+      const updated = new Date(repo.updated_at).toLocaleDateString();
+      return `
+        <article class="project-card">
+          <div class="project-header">
+            <h3><a href="${repo.html_url}" target="_blank" rel="noopener">${repo.name}</a></h3>
+            <div class="project-meta">
+              <span class="muted">${updated}</span>
+              ${repo.stargazers_count > 0 ? `<span class="muted">★ ${repo.stargazers_count}</span>` : ''}
+            </div>
+          </div>
+          <p class="project-desc">${desc}</p>
+          <div class="project-tags">${lang}${topics}</div>
+        </article>
+      `;
+    };
+
+    // Utility functions
+    const el = (tag, attrs = {}, children = []) => {
+      const elem = document.createElement(tag);
+      Object.entries(attrs).forEach(([k, v]) => elem.setAttribute(k, v));
+      children.forEach(child => elem.appendChild(typeof child === 'string' ? document.createTextNode(child) : child));
+      return elem;
+    };
+    const mount = (parent, child) => parent.appendChild(child);
+    const clear = (elem) => { elem.innerHTML = ''; };
+
+    // Filter repositories based on search query
+    const filterRepos = (repos, query) => {
+      if (!query.trim()) return repos;
+      const q = query.toLowerCase();
+      return repos.filter(repo => 
+        repo.name.toLowerCase().includes(q) ||
+        (repo.description && repo.description.toLowerCase().includes(q)) ||
+        (repo.language && repo.language.toLowerCase().includes(q)) ||
+        (repo.topics && repo.topics.some(topic => topic.toLowerCase().includes(q)))
+      );
+    };
+
+    // Render projects
+    const render = (repos) => {
+      clear(grid);
+      if (repos.length === 0) {
+        mount(grid, el('div', { class: 'card' }, ['No projects found matching your search.']));
+      } else {
+        repos.forEach(repo => {
+          const card = el('div');
+          card.innerHTML = projectCard(repo);
+          mount(grid, card.firstElementChild);
+        });
+      }
+      grid.setAttribute('aria-busy', 'false');
+    };
+
+    async function init() {
+      try {
+        const allRepos = await getRepos();
+        const nonForks = allRepos.filter(repo => !repo.fork);
+        let currentSort = 'popular';
+        
+        // Sort repos initially by popularity
+        const sortedRepos = nonForks.sort((a, b) => scoreRepoPopular(b) - scoreRepoPopular(a));
+        render(sortedRepos);
+
+        // Sort toggle
+        sortToggle.addEventListener('change', () => {
+          const useClean = sortToggle.checked;
+          currentSort = useClean ? 'clean' : 'popular';
+          sortLabel.textContent = `Sort: ${useClean ? 'Clean' : 'Popular'}`;
+          
+          const sorted = useClean 
+            ? nonForks.sort((a, b) => scoreRepoClean(b) - scoreRepoClean(a))
+            : nonForks.sort((a, b) => scoreRepoPopular(b) - scoreRepoPopular(a));
+          
+          const q = search.value;
+          render(filterRepos(sorted, q));
+        });
+
+        // Search functionality with debounce
+        let searchTimeout;
+        search.addEventListener('input', () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            const q = search.value;
+            const sorted = currentSort === 'clean' 
+              ? nonForks.sort((a, b) => scoreRepoClean(b) - scoreRepoClean(a))
+              : nonForks.sort((a, b) => scoreRepoPopular(b) - scoreRepoPopular(a));
+            render(filterRepos(sorted, q));
+          }, 150);
+        });
+        // Enter opens top match
+        search.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter'){
+            const q = search.value;
+            const sorted = currentSort === 'clean' 
+              ? nonForks.sort((a, b) => scoreRepoClean(b) - scoreRepoClean(a))
+              : nonForks.sort((a, b) => scoreRepoPopular(b) - scoreRepoPopular(a));
+            const list = filterRepos(sorted, q);
+            if(list.length){ window.open(list[0].html_url, '_blank', 'noopener'); }
+          }
+        });
+      }catch(err){
+        clear(grid);
+        mount(grid, el('div', { class:'card'}, ['Failed to load projects.']));
+        grid.setAttribute('aria-busy','false');
+      }
+    }
+
+    init();
+  </script>
+  <script>
+    // Mobile menu toggle for this page
+    (function(){
+      const btn = document.getElementById('mobile-toggle');
+      const nav = document.getElementById('primary-nav');
+      if(!btn || !nav) return;
+      btn.addEventListener('click', ()=>{
+        const open = nav.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(open));
+      });
+      nav.querySelectorAll('a').forEach(a => a.addEventListener('click', ()=>{
+        nav.classList.remove('open');
+        btn.setAttribute('aria-expanded','false');
+      }));
+    })();
+    (function(){
+      const hide = ()=>{ const o=document.getElementById('page-loader'); if(o) o.classList.add('hidden'); };
+      window.addEventListener('load', ()=> setTimeout(hide, 250));
+      setTimeout(hide, 2000);
+    })();
+    window.addEventListener('DOMContentLoaded', ()=>{
+      if(!window.tsParticles) return;
+      tsParticles.load({
+        id:'tsparticles',
+        options:{
+          fullScreen:{ enable:false },
+          background:{ color:{ value:'transparent' } },
+          detectRetina:true,
+          fpsLimit:60,
+          particles:{
+            number:{ value:12, density:{ enable:true, area:1200 } },
+            move:{ enable:true, speed:0.6, direction:'none', outModes:{ default:'out' } },
+            opacity:{ value:0.55 },
+            size:{ value:{ min:10, max:20 } },
+            shape:{ type:'character', character:{
+              value:['🐱','🐦'],
+              weight:400,
+              fill:true,
+              font:'"Segoe UI Emoji", Apple Color Emoji, Noto Color Emoji, EmojiOne Color',
+            }},
+            color:{ value: getComputedStyle(document.documentElement).getPropertyValue('--text').trim() }
+          },
+          interactivity:{
+            detectsOn:'window',
+            events:{ onHover:{ enable:true, mode:'repulse' }, onClick:{ enable:true, mode:['attract','push'] }, resize:true },
+            modes:{ repulse:{ distance:80, duration:0.4 }, attract:{ distance:120, duration:0.3, factor:2 }, push:{ quantity:2 } }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

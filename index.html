@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" data-theme="sand">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mohamed Jiyath Khan — 0x4a4b</title>
+  <meta name="description" content="Portfolio of Mohamed Jiyath Khan (0x4a4b) — hobby developer building for Web, Software, AI/ML, IoT, Embedded, and Minecraft modding." />
+  <meta name="theme-color" content="#ffffff" />
+  <meta property="og:title" content="Mohamed Jiyath Khan — 0x4a4b" />
+  <meta property="og:description" content="Hobby developer crafting minimal, fast, and useful experiences across Web, Software, AI/ML, IoT, Embedded, and Minecraft modding." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://0x4a4b.dev/" />
+  <meta property="og:image" content="./assets/img/favicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Mohamed Jiyath Khan Ibn Ibramsha",
+    "alternateName": "0x4a4b",
+    "url": "https://0x4a4b.dev/",
+    "sameAs": [
+      "https://github.com/Jiyath5516F"
+    ],
+    "jobTitle": "Hobby Developer"
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/reset.css" />
+  <link rel="stylesheet" href="./assets/css/variables.css" />
+  <link rel="stylesheet" href="./assets/css/base.css" />
+  <link rel="stylesheet" href="./assets/css/layout.css" />
+  <link rel="stylesheet" href="./assets/css/components.css" />
+  <link rel="icon" href="./assets/img/favicon.png" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.2.0/css/line.css">
+</head>
+<body>
+  <div class="loader-overlay" id="page-loader" aria-hidden="true"><div class="spinner" role="status" aria-label="Loading"></div></div>
+  <div id="tsparticles" aria-hidden="true"></div>
+  <canvas id="pixel-cats" aria-hidden="true"></canvas>
+  <a class="sr-only skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#">0x4a4b</a>
+      <button class="mobile-toggle" id="mobile-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle menu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <a href="#about">About</a>
+        <!-- <a href="#experience">Experience</a> -->
+        <a href="#projects">Projects</a>
+        <a href="./blogs.html">Blog</a>
+        <a href="#contact">Contact</a>
+        <div class="menu-footer">
+          <span class="muted" style="font-size:14px">Appearance</span>
+          <div class="theme-switch">
+            <label class="switch" aria-label="Theme">
+              <input type="checkbox" id="theme-toggle" />
+              <span class="slider" aria-hidden="true"></span>
+              <span class="switch-label" id="theme-label">Light</span>
+            </label>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero reveal" data-section="hero">
+      <div class="container">
+        <h1>Hey, there!</h1>
+        <p class="lede">I’m <strong id="dev-name">Mohamed Jiyath Khan</strong> (<strong>0x4a4b</strong>), a hobby developer crafting for Web, Software, AI/ML, IoT, Embedded, and Minecraft modding.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#projects">See projects <i class="uil uil-location-arrow"></i></a>
+          <a class="btn btn-secondary" href="https://github.com/Jiyath5516F" target="_blank" rel="noopener">GitHub <i class="uil uil-github"></i></a>
+          <a class="btn btn-secondary" href="https://www.youtube.com/@0x4a4b" target="_blank" rel="noopener">YouTube <i class="uil uil-youtube"></i></a>
+          <a class="btn btn-secondary" href="https://www.instagram.com/jiyath_khan_?igsh=eGo5ZG11azZlaTd3" target="_blank" rel="noopener">Instagram <i class="uil uil-instagram-alt"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section reveal" data-section="about">
+      <div class="container two-col">
+        <div>
+          <h2>About</h2>
+          <p>I build throughout the stack with a focus on clarity, performance, and accessibility. I enjoy turning ideas into working demos and polished tools.</p>
+          <ul class="tags" id="skills-list"></ul>
+        </div>
+        <aside class="card">
+          <h3>Quick facts</h3>
+          <ul class="list">
+            <li>Based in: <span id="location">—</span></li>
+            <li><span id="role">Hobby Developer</span></li>
+            <br>
+            <li>Web · Software · AI/ML · IoT · Embedded · Minecraft Modding</li>
+          </ul>
+          <div style="margin-top:14px;display:flex;align-items:center;gap:12px">
+            <img id="avatar" src="" alt="Profile avatar" width="64" height="64" style="border-radius:50%;border:1px solid var(--border)" loading="lazy" />
+            <div class="flag-chip-wrapper" aria-live="polite">
+              <div class="flag-chip" tabindex="0" title="Free Palestine">
+                <span>Free Palestine</span>
+                <img src="./assets/img/palestine.svg" alt="Palestine flag" class="icon" width="18" height="12" />
+              </div>
+              <div class="flag-pop" role="tooltip" aria-hidden="true">
+                <img src="./assets/img/palestine-state.png" alt="Map of Palestine" />
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- <section id="experience" class="section reveal" data-section="experience">
+      <div class="container">
+        <h2>Experience</h2>
+        <div id="experience-timeline" class="timeline"></div>
+      </div>
+    </section> -->
+
+    <section id="projects" class="section reveal" data-section="projects">
+      <div class="container">
+        <div class="section-head">
+          <h2>Projects</h2>
+          <div class="filters">
+            <label class="switch">
+              <input type="checkbox" id="sort-toggle" />
+              <span class="slider"></span>
+              <span class="switch-label" id="sort-label" aria-live="polite">Sort: Popular</span>
+            </label>
+          </div>
+        </div>
+        <div id="projects-grid" class="grid" aria-busy="true"></div>
+        <div style="margin-top:16px">
+          <a class="btn" href="./projects.html">See all projects →</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section reveal" data-section="contact">
+      <div class="container">
+        <h2>Contact</h2>
+        <p>Have a challenge or idea? Let’s talk.</p>
+        <br>
+        <div class="contact-links">
+          <a class="btn" id="email-link" href="mailto:contact@0x4a4b.dev">Email</a>
+            <button class="btn btn-secondary" id="copy-email" type="button" aria-label="Copy email to clipboard" style="font-family: inherit;">Copy email</button>
+          <a class="btn btn-secondary" href="https://www.instagram.com/jiyath_khan_?igsh=eGo5ZG11azZlaTd3" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> 0x4a4b. </p>
+  </div>
+  </footer>
+
+  <button id="top-btn" class="top-btn" aria-label="Scroll to top">↑</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js" defer></script>
+  <script type="module" src="./assets/js/main.js"></script>
+  <script>
+    // Hide loader once content and repos have rendered or after a timeout fallback
+    (function(){
+      const hide = ()=>{ const o=document.getElementById('page-loader'); if(o) o.classList.add('hidden'); };
+      window.addEventListener('load', ()=> setTimeout(hide, 250));
+      setTimeout(hide, 2000);
+    })();
+  </script>
+</body>
+</html>

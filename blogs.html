@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-theme="sand">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog — 0x4a4b</title>
+  <meta name="description" content="Technical insights, tutorials, and thoughts by 0x4a4b on web development, programming, and technology." />
+  <meta name="theme-color" content="#fffdf8" />
+  <link rel="canonical" href="./blogs.html" />
+  <meta property="og:title" content="Blog — 0x4a4b" />
+  <meta property="og:description" content="Technical insights and tutorials on web development and programming." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="./blogs.html" />
+  <meta property="og:image" content="./assets/img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/reset.css" />
+  <link rel="stylesheet" href="./assets/css/variables.css" />
+  <link rel="stylesheet" href="./assets/css/base.css" />
+  <link rel="stylesheet" href="./assets/css/layout.css" />
+  <link rel="stylesheet" href="./assets/css/components.css" />
+  <link rel="icon" href="./assets/img/favicon.png" type="image/svg+xml" />
+</head>
+<body data-skip-projects="true">
+  <div class="loader-overlay" id="page-loader" aria-hidden="true">
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">0x4a4b</a>
+      <button class="mobile-toggle" id="mobile-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle menu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <a href="./index.html#about">About</a>
+        <!-- <a href="./index.html#experience">Experience</a> -->
+        <a href="./index.html#projects">Projects</a>
+        <a href="./blogs.html">Blog</a>
+        <a href="./index.html#contact">Contact</a>
+        <div class="menu-footer">
+          <span class="muted" style="font-size:14px">Appearance</span>
+          <div class="theme-switch">
+            <label class="switch" aria-label="Theme">
+              <input type="checkbox" id="theme-toggle" />
+              <span class="slider" aria-hidden="true"></span>
+              <span class="switch-label" id="theme-label">Light</span>
+            </label>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section" data-section="blogs">
+      <div class="container">
+        <div class="section-head">
+          <h1>Blog</h1>
+          <p class="lede">Technical insights, tutorials, and thoughts on web development and programming.</p>
+        </div>
+        
+        <div class="filters-section">
+          <input type="search" id="blog-search" placeholder="Search posts..." aria-label="Search blog posts" autocomplete="off" />
+          <div class="tag-filters" id="tag-filters">
+            <button class="tag-filter active" data-tag="all">All Posts</button>
+          </div>
+        </div>
+
+        <div id="blogs-grid" class="blogs-grid" aria-busy="true">
+          <!-- Blog posts will be loaded here -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> 0x4a4b. <a href="./index.html">← Back to main</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js" defer></script>
+  <script type="module" src="./assets/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM loaded');
+      
+      // Set year
+      document.getElementById('year').textContent = new Date().getFullYear();
+      
+      // Hide loader after a delay
+      const hideLoader = () => {
+        const loader = document.getElementById('page-loader');
+        if (loader) loader.classList.add('hidden');
+      };
+      window.addEventListener('load', () => setTimeout(hideLoader, 250));
+      setTimeout(hideLoader, 2000);
+      
+      // Blog functionality
+      let allBlogs = [];
+      let currentTag = 'all';
+
+      const blogsGrid = document.getElementById('blogs-grid');
+      const searchInput = document.getElementById('blog-search');
+      const tagFilters = document.getElementById('tag-filters');
+
+      // Utility functions
+      const createElement = (tag, attrs = {}, children = []) => {
+        const elem = document.createElement(tag);
+        Object.entries(attrs).forEach(([k, v]) => elem.setAttribute(k, v));
+        children.forEach(child => {
+          if (typeof child === 'string') {
+            elem.appendChild(document.createTextNode(child));
+          } else {
+            elem.appendChild(child);
+          }
+        });
+        return elem;
+      };
+
+      const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+      };
+
+      // Create blog card
+      const createBlogCard = (blog) => {
+        const card = createElement('article', { class: 'blog-card' });
+        
+        // Thumbnail
+        const thumbnail = createElement('div', { class: 'blog-thumbnail' });
+        if (blog.thumbnail) {
+          const img = createElement('img', { 
+            src: blog.thumbnail, 
+            alt: blog.title, 
+            class: 'blog-thumbnail' 
+          });
+          img.onerror = () => { thumbnail.innerHTML = '📝'; };
+          thumbnail.appendChild(img);
+        } else {
+          thumbnail.textContent = '📝';
+        }
+        
+        // Content
+        const content = createElement('div', { class: 'blog-content' });
+        
+        // Meta info
+        const meta = createElement('div', { class: 'blog-meta' });
+        meta.appendChild(createElement('span', {}, [formatDate(blog.publishedAt)]));
+        meta.appendChild(createElement('span', { class: 'read-time' }, [`${blog.readTime} min read`]));
+        if (blog.featured) {
+          meta.appendChild(createElement('span', { class: 'featured-badge' }, ['Featured']));
+        }
+        
+        // Title and subtitle
+        const title = createElement('h2', { class: 'blog-title' });
+        const titleLink = createElement('a', { href: `./${blog.file}` }, [blog.title]);
+        title.appendChild(titleLink);
+        
+        const subtitle = createElement('p', { class: 'blog-subtitle' }, [blog.subtitle]);
+        const excerpt = createElement('p', { class: 'blog-excerpt' }, [blog.excerpt || 'Read more...']);
+        
+        // Tags
+        const footer = createElement('div', { class: 'blog-footer' });
+        const tags = createElement('div', { class: 'blog-tags' });
+        blog.tags.forEach(tag => {
+          tags.appendChild(createElement('span', { class: 'tag' }, [tag]));
+        });
+        footer.appendChild(tags);
+        
+        // Assemble card
+        content.appendChild(meta);
+        content.appendChild(title);
+        content.appendChild(subtitle);
+        content.appendChild(excerpt);
+        content.appendChild(footer);
+        
+        card.appendChild(thumbnail);
+        card.appendChild(content);
+        
+        return card;
+      };
+
+      // Render blogs
+      const renderBlogs = (blogs) => {
+        blogsGrid.innerHTML = '';
+        if (blogs.length === 0) {
+          blogsGrid.appendChild(createElement('div', { class: 'card' }, ['Oops! No blog posts found.']));
+        } else {
+          blogs.forEach(blog => {
+            blogsGrid.appendChild(createBlogCard(blog));
+          });
+        }
+        blogsGrid.setAttribute('aria-busy', 'false');
+      };
+
+      // Filter blogs
+      const filterBlogs = () => {
+        let filtered = allBlogs.filter(blog => blog.published);
+        
+        // Apply tag filter
+        if (currentTag !== 'all') {
+          filtered = filtered.filter(blog => blog.tags.includes(currentTag));
+        }
+        
+        // Apply search filter
+        const searchQuery = searchInput.value.toLowerCase().trim();
+        if (searchQuery) {
+          filtered = filtered.filter(blog => 
+            blog.title.toLowerCase().includes(searchQuery) ||
+            blog.subtitle.toLowerCase().includes(searchQuery) ||
+            (blog.excerpt && blog.excerpt.toLowerCase().includes(searchQuery)) ||
+            blog.tags.some(tag => tag.toLowerCase().includes(searchQuery))
+          );
+        }
+        
+        renderBlogs(filtered);
+      };
+
+      // Create tag filters
+      const createTagFilters = (blogs) => {
+        const allTags = new Set();
+        blogs.forEach(blog => {
+          if (blog.published) {
+            blog.tags.forEach(tag => allTags.add(tag));
+          }
+        });
+        
+        const sortedTags = Array.from(allTags).sort();
+        
+        sortedTags.forEach(tag => {
+          const button = createElement('button', { 
+            class: 'tag-filter', 
+            'data-tag': tag 
+          }, [tag]);
+          
+          button.addEventListener('click', () => {
+            // Update active state
+            tagFilters.querySelectorAll('.tag-filter').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            currentTag = tag;
+            filterBlogs();
+          });
+          
+          tagFilters.appendChild(button);
+        });
+      };
+
+      // Load blogs from JSON
+      const loadBlogs = async () => {
+        try {
+          console.log('Loading blogs...');
+          const response = await fetch('./assets/data/blogs.json');
+          if (!response.ok) throw new Error('Failed to load blogs');
+          
+          allBlogs = await response.json();
+          console.log('Blogs loaded:', allBlogs);
+          
+          // Sort by date (newest first)
+          allBlogs.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+          
+          createTagFilters(allBlogs);
+          filterBlogs();
+          
+        } catch (error) {
+          console.error('Error loading blogs:', error);
+          blogsGrid.innerHTML = '<div class="card">Failed to load blog posts. Please try again later.</div>';
+          blogsGrid.setAttribute('aria-busy', 'false');
+        }
+      };
+
+      // Search functionality
+      let searchTimeout;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(filterBlogs, 300);
+      });
+
+      // "All Posts" filter click handler (robust to clicks on child nodes)
+      tagFilters.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        if (btn.dataset.tag === 'all') {
+          tagFilters.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentTag = 'all';
+          filterBlogs();
+        }
+      });
+
+  // Mobile menu handled globally in main.js (avoid double listeners here)
+
+      // Initialize
+      loadBlogs();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+:root {
+  --bg: #fffdf8;
+  --text: #2b2118;
+  --muted: #7b6a58; /* warm sand */
+  --border: #efe7dc;
+  --card: #fffbf3;
+  --brand: #2b2118;
+  --accent: #734f2f;
+  --link: #2b2118;
+  --radius: 12px;
+  --shadow: 0 2px 24px rgba(0, 0, 0, 0.06);
+  --container: 1100px;
+}
+
+/* Two-theme system: sand (light) and owl (dark) */
+html[data-theme="sand"] {
+  --bg: #fffdf8;
+  --text: #2b2118;
+  --muted: #7b6a58;
+  --border: #efe7dc;
+  --card: #fffbf3;
+  --link: #2b2118;
+  --accent: #734f2f;
+  --glow: rgba(115, 79, 47, 0.25);
+}
+html[data-theme="owl"] {
+  --bg: #0b0e13;
+  --text: #e5e7eb;
+  --muted: #9aa1ad;
+  --border: #1f2937;
+  --card: #0f141b;
+  --link: #e5e7eb;
+  --accent: #a78bfa;
+  --glow: rgba(167, 139, 250, 0.25);
+}
